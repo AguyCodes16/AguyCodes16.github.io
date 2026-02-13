@@ -1,24 +1,31 @@
 let bird = document.getElementById("bird");
 let birdy = 200;
-let gravity = 0.8;
-let velocity = 0.3;
+let gravity = 0.5;    // weaker gravity
+let velocity = 0;      // start with no movement
+let jumpPower = -8;    // how strong each click is
+let maxFallSpeed = 10; // cap falling speed
 
 function jump() {
-  velocity = -10; // click to move up
+    velocity = jumpPower; // every click boosts bird up
 }
 
 document.addEventListener("click", jump);
 
 function gameLoop() {
-  velocity += gravity;
-  birdy += velocity;
+    // Apply gravity
+    velocity += gravity;
+    if (velocity > maxFallSpeed) velocity = maxFallSpeed; // limit falling speed
 
-  if (birdy > window.innerHeight - 120) birdy = window.innerHeight - 120;
-  if (birdy < 0) birdy = 0;
+    birdy += velocity;
 
-  bird.style.top = birdy + "px";
+    // Keep bird inside window
+    if (birdy > window.innerHeight - 120) birdy = window.innerHeight - 120;
+    if (birdy < 0) birdy = 0;
 
-  requestAnimationFrame(gameLoop);
+    bird.style.top = birdy + "px";
+
+    requestAnimationFrame(gameLoop);
 }
 
 gameLoop();
+
