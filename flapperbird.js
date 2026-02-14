@@ -1,31 +1,36 @@
+// flapperbird.js
 let bird = document.getElementById("bird");
 let birdy = 200;
-let gravity = 0.5;    // weaker gravity
-let velocity = 0;      // start with no movement
-let jumpPower = -8;    // how strong each click is
-let maxFallSpeed = 10; // cap falling speed
+let gravity = 0.4;
+let velocity = 0;
 
 function jump() {
-    velocity = jumpPower; // every click boosts bird up
+  velocity = -10;  // bird jumps upward
 }
 
 document.addEventListener("click", jump);
 
 function gameLoop() {
-    // Apply gravity
-    velocity += gravity;
-    if (velocity > maxFallSpeed) velocity = maxFallSpeed; // limit falling speed
+  velocity += gravity;  // gravity pulls bird down
+  birdy += velocity;
 
-    birdy += velocity;
+  // keep bird inside screen
+  if (birdy > window.innerHeight - 120) birdy = window.innerHeight - 120;
+  if (birdy < 0) birdy = 0;
 
-    // Keep bird inside window
-    if (birdy > window.innerHeight - 120) birdy = window.innerHeight - 120;
-    if (birdy < 0) birdy = 0;
+  bird.style.top = birdy + "px";  // move bird
 
-    bird.style.top = birdy + "px";
-
-    requestAnimationFrame(gameLoop);
+  requestAnimationFrame(gameLoop);
 }
 
+// pipe references (just for now)
+let pipeAboveTall = document.getElementById("pipe-tall-up");
+let pipeBelowTall = document.getElementById("pipe-tall-down");
+let pipeBelow = document.getElementById("pipe-down");
+let pipeUp = document.getElementById("pipe-up");
+
 gameLoop();
+
+
+
 
