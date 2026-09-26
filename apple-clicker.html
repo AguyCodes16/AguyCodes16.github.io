@@ -17,7 +17,7 @@ h1{margin:0;font-size:clamp(32px,6vw,64px);color:#174d1b;text-shadow:3px 3px 0 w
 #apple:active{transform:translate(-50%,-50%) scale(.92)}
 .instructions{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:20;background:#ffffffd9;padding:12px 20px;border-radius:999px;color:#174d1b;font-weight:bold;white-space:nowrap}
 .red-apple{position:absolute;top:-100px;left:0;font-size:48px;pointer-events:none;z-index:5;will-change:transform}
-.cloud{position:absolute;font-size:70px;opacity:.7;pointer-events:none}
+.carrot{position:absolute;top:-100px;font-size:52px;cursor:pointer;z-index:10;user-select:none;filter:drop-shadow(0 8px 5px #0003)}\n.cloud{position:absolute;font-size:70px;opacity:.7;pointer-events:none}
 .c1{left:8%;top:18%}.c2{right:12%;top:30%}.c3{left:40%;top:10%}
 </style>
 </head>
@@ -27,7 +27,7 @@ h1{margin:0;font-size:clamp(32px,6vw,64px);color:#174d1b;text-shadow:3px 3px 0 w
 <h1>Apple Clicker</h1>
 <div id="score">Red apples falling: 0</div>
 </header>
-<div class="cloud c1">☁️</div>
+<div id="carrots"></div>\n<div class="cloud c1">☁️</div>
 <div class="cloud c2">☁️</div>
 <div class="cloud c3">☁️</div>
 <button id="apple" aria-label="Click the green apple">🍏</button>
@@ -37,7 +37,40 @@ h1{margin:0;font-size:clamp(32px,6vw,64px);color:#174d1b;text-shadow:3px 3px 0 w
 const game=document.getElementById("game");
 const button=document.getElementById("apple");
 const score=document.getElementById("score");
-let apples=0;
+let apples=0;\nlet carrotActive=false;
+
+function makeCarrot(){
+  if(carrotActive) return;
+  carrotActive=true;
+  const carrot=document.createElement("div");
+  carrot.className="carrot";
+  carrot.textContent="🥕";
+  document.getElementById("carrots").appendChild(carrot);
+  let x=Math.random()*(window.innerWidth-60);
+  let y=-90;
+  const speed=2.2+Math.random()*1.5;
+  let clicked=false;
+  carrot.addEventListener("click",()=>{
+    clicked=true;
+    carrot.remove();
+    carrotActive=false;
+  });
+  function fallCarrot(){
+    if(clicked) return;
+    y+=speed;
+    carrot.style.transform=`translate(${x}px,${y}px)`;
+    if(y>window.innerHeight){
+      carrot.remove();
+      carrotActive=false;
+      apples=Math.floor(apples*0.9);
+      score.textContent="Red apples falling: "+apples+" | Missed carrot! -10%";
+      setTimeout(()=>{ if(apples>=0) score.textContent="Red apples falling: "+apples; },1800);
+      return;
+    }
+    requestAnimationFrame(fallCarrot);
+  }
+  fallCarrot();
+}
 
 function makeApple(){
   const red=document.createElement("div");
@@ -79,6 +112,6 @@ window.addEventListener("resize",()=>{
     if(r.left>window.innerWidth) a.style.transform="translate(0px,-100px)";
   });
 });
-</script>
+setInterval(makeCarrot,8000);\n</script>
 </body>
 </html>
