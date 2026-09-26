@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Clicker</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif}
+body{background:linear-gradient(#bff3ff 0%,#eafff0 72%,#8bd36b 72%,#5cad4f 100%);position:relative}
+#game{position:relative;width:100%;height:100%}
+header{position:absolute;top:18px;left:50%;transform:translateX(-50%);text-align:center;z-index:20}
+h1{margin:0;font-size:clamp(32px,6vw,64px);color:#174d1b;text-shadow:3px 3px 0 white}
+#score{font-size:22px;font-weight:bold;color:#174d1b;margin-top:4px}
+#apple{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:clamp(110px,18vw,190px);background:none;border:0;cursor:pointer;z-index:15;filter:drop-shadow(0 12px 8px #0003);transition:transform .08s}
+#apple:hover{transform:translate(-50%,-50%) scale(1.08)}
+#apple:active{transform:translate(-50%,-50%) scale(.92)}
+.instructions{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:20;background:#ffffffd9;padding:12px 20px;border-radius:999px;color:#174d1b;font-weight:bold;white-space:nowrap}
+.red-apple{position:absolute;top:-100px;left:0;font-size:48px;pointer-events:none;z-index:5;will-change:transform}
+.cloud{position:absolute;font-size:70px;opacity:.7;pointer-events:none}
+.c1{left:8%;top:18%}.c2{right:12%;top:30%}.c3{left:40%;top:10%}
+</style>
+</head>
+<body>
+<div id="game">
+<header>
+<h1>Apple Clicker</h1>
+<div id="score">Red apples falling: 0</div>
+</header>
+<div class="cloud c1">☁️</div>
+<div class="cloud c2">☁️</div>
+<div class="cloud c3">☁️</div>
+<button id="apple" aria-label="Click the green apple">🍏</button>
+<div class="instructions">Click the green apple!</div>
+</div>
+<script>
+const game=document.getElementById("game");
+const button=document.getElementById("apple");
+const score=document.getElementById("score");
+let apples=0;
+
+function makeApple(){
+  const red=document.createElement("div");
+  red.className="red-apple";
+  red.textContent="🍎";
+  game.appendChild(red);
+
+  const size=38+Math.random()*28;
+  red.style.fontSize=size+"px";
+
+  const startX=Math.random()*(window.innerWidth-size);
+  let y=-100-Math.random()*window.innerHeight;
+  const speed=1.2+Math.random()*2.2;
+  const sway=(Math.random()*2-1)*0.35;
+  let x=startX;
+
+  function fall(){
+    y+=speed;
+    x+=sway;
+    if(y>window.innerHeight+100){
+      y=-100;
+      x=Math.random()*(window.innerWidth-size);
+    }
+    red.style.transform=`translate(${x}px,${y}px)`;
+    requestAnimationFrame(fall);
+  }
+  fall();
+}
+
+button.addEventListener("click",()=>{
+  apples++;
+  score.textContent="Red apples falling: "+apples;
+  makeApple();
+});
+
+window.addEventListener("resize",()=>{
+  document.querySelectorAll(".red-apple").forEach(a=>{
+    const r=a.getBoundingClientRect();
+    if(r.left>window.innerWidth) a.style.transform="translate(0px,-100px)";
+  });
+});
+</script>
+</body>
+</html>
